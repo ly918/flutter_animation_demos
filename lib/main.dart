@@ -32,7 +32,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   AnimationPointManager _animationPointManager = AnimationPointManager();
 
-  //step 1
   GlobalKey stackKey = GlobalKey();
   GlobalKey endKey = GlobalKey();
 
@@ -41,24 +40,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     print("stack key " + stackKey.toString());
     print("end key " + endKey.toString());
 
-    //step 2
     _animationPointManager.addParabolicAniamtion(
       vsync: this,
       stackKey: stackKey,
       startKey: startKey,
       endKey: endKey,
+      color: Colors.green,
       statusListener: (AnimationStatus status) {
+        setState(() {});
         if (status == AnimationStatus.completed) {
-          setState(() {
-            count += 1;
-          });
           buyOnTap();
         }
       },
+      duration: Duration(milliseconds: 700),
     );
-
-    //step 3
-    setState(() {});
   }
 
   buyOnTap() {
@@ -66,18 +61,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       vsync: this,
       stackKey: stackKey,
       startKey: endKey,
-      size: Size(150, 60),
+      child: Container(
+        width: 100,
+        color: Colors.green,
+        padding: EdgeInsets.all(25),
+        child: Icon(Icons.home, size: 50, color: Colors.white),
+      ),
+      popupOffset: Offset(0, -50),
       duration: Duration(milliseconds: 800),
       statusListener: (AnimationStatus status) {
         if (status == AnimationStatus.completed) {
           setState(() {
             count += 1;
           });
+        } else {
+          setState(() {});
         }
       },
     );
-
-    setState(() {});
   }
 
   ShopListView _shopListView;

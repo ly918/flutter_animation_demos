@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 
 // ignore: must_be_immutable
 class ParabolicAnimationWidget extends AnimatedWidget {
@@ -17,34 +16,55 @@ class ParabolicAnimationWidget extends AnimatedWidget {
     @required this.stackKey,
     @required this.startKey,
     @required this.endKey,
-    this.size = 30.0,
-    this.color = Colors.black,
+    this.size = 20.0,
+    this.color = Colors.red,
     this.startAdjustOffset = Offset.zero,
     this.endAdjustOffset = Offset.zero,
   }) : super(listenable: animation);
 
-  double _width = 0;
-  double _height = 0;
   Offset _startOffset;
   Offset _endOffset;
 
   @override
   Widget build(BuildContext context) {
-    final Offset offset = _calOffset();
+    _calPoints();
+
+    final Animation<double> animation = listenable;
+    final double time = animation.value;
+
+    // 设time=1 已知两点坐标 和 初速度 可求出 加速度 a
+    // double x(double time) => _x + _v * time + 0.5 * _a * time * time;
+    final double initV = -400; //纵坐标初速度, 负值为向上抛
+    final double acceleration =
+        (_endOffset.dy - _startOffset.dy - initV) / 0.5; //求纵坐标加速度
+
+    final GravitySimulation spy = GravitySimulation(
+        acceleration, _startOffset.dy, _endOffset.dy, initV); //y轴加速度运动 模拟
+
+    final GravitySimulation spx = GravitySimulation(0, _startOffset.dx,
+        _endOffset.dx, _endOffset.dx - _startOffset.dx); //x轴匀速模拟 加速度为0
+
+    final Animation<double> opacity = Tween<double>(begin: 1, end: 0).animate(
+        CurvedAnimation(
+            parent: animation, curve: Interval(0.9, 1, curve: Curves.ease)));
+
     return Positioned(
-      top: offset.dy,
-      left: offset.dx,
-      child: Container(
-        height: size,
-        width: size,
-        decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.all(Radius.circular(size / 2.0))),
+      top: spy.x(time),
+      left: spx.x(time),
+      child: Opacity(
+        opacity: opacity.value,
+        child: Container(
+          height: size,
+          width: size,
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.all(Radius.circular(size / 2.0))),
+        ),
       ),
     );
   }
 
-  Offset _calOffset() {
+  void _calPoints() {
     if (_startOffset == null) {
       RenderBox stackBox = stackKey.currentContext.findRenderObject();
       Offset stackBoxOffset = stackBox.globalToLocal(Offset.zero);
@@ -60,13 +80,6 @@ class ParabolicAnimationWidget extends AnimatedWidget {
       _endOffset = endBox.localToGlobal(Offset(
           endMargin.left + endAdjustOffset.dx,
           stackBoxOffset.dy + endMargin.top + endAdjustOffset.dy));
-
-      _width = _endOffset.dx - _startOffset.dx;
-      _height = _endOffset.dy - _startOffset.dy;
-
-      return _startOffset;
-    } else {
-      return Offset(_startOffset.dx + _x(), _startOffset.dy + _y());
     }
   }
 
@@ -74,17 +87,5 @@ class ParabolicAnimationWidget extends AnimatedWidget {
     final Widget widget = key.currentContext.widget;
     EdgeInsets margin = (widget is Container) ? widget.margin : EdgeInsets.zero;
     return margin ?? EdgeInsets.zero;
-  }
-
-  double _y() {
-    Animation<double> animation = listenable;
-    double t = animation.value;
-    return pow(t, 3) * _height;
-  }
-
-  double _x() {
-    Animation<double> animation = listenable;
-    double t = animation.value;
-    return _width * t;
   }
 }

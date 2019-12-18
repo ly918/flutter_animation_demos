@@ -5,14 +5,18 @@ import 'package:flutter_animation_demos/popup_animation_widget.dart';
 class AnimationPointManager {
   List<AnimatedWidget> list = [];
 
-  addParabolicAniamtion({
+  Future<void> addParabolicAniamtion({
     @required TickerProvider vsync,
     @required GlobalKey stackKey,
     @required GlobalKey startKey,
     @required GlobalKey endKey,
-    Duration duration,
-    AnimationStatusListener statusListener,
-  }) {
+    @required Duration duration,
+    @required AnimationStatusListener statusListener,
+    Color color = Colors.red,
+    double size = 20,
+    Offset startAdjustOffset = Offset.zero,
+    Offset endAdjustOffset = Offset.zero,
+  }) async {
     AnimationController controller = createController(vsync, duration);
     Animation animation = createAnimation(controller);
 
@@ -21,30 +25,32 @@ class AnimationPointManager {
       stackKey: stackKey,
       startKey: startKey,
       endKey: endKey,
-      endAdjustOffset: Offset.zero,
-      startAdjustOffset: Offset.zero,
+      size: size,
+      color: color,
+      startAdjustOffset: startAdjustOffset,
+      endAdjustOffset: endAdjustOffset,
     );
     list.add(animatedWidget);
+    statusListener(AnimationStatus.dismissed);
 
     try {
-      controller.forward().orCancel;
-    } on TickerCanceled {}
+      await controller.forward().orCancel;
+    } on TickerCanceled {
+      print("Ticker Canceled");
+    }
 
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        list.remove(animatedWidget);
-        controller.dispose();
-      }
-      statusListener(status);
-    });
+    list.remove(animatedWidget);
+    controller.dispose();
+    statusListener(AnimationStatus.completed);
   }
 
-  addPopupAniamtion({
+  Future<void> addPopupAniamtion({
     @required TickerProvider vsync,
     @required GlobalKey stackKey,
     @required GlobalKey startKey,
-    @required Size size,
+    @required Widget child,
     Duration duration,
+    Offset popupOffset = Offset.zero,
     AnimationStatusListener statusListener,
   }) async {
     AnimationController controller = createController(vsync, duration);
@@ -53,23 +59,23 @@ class AnimationPointManager {
       animation: controller.view,
       stackKey: stackKey,
       startKey: startKey,
-      size: size,
-      startAdjustOffset: Offset(0, -30),
+      child: child,
+      popupOffset: popupOffset,
     );
     list.add(animatedWidget);
+    statusListener(AnimationStatus.dismissed);
 
     try {
       await controller.forward().orCancel;
       await controller.reverse().orCancel;
-    } on TickerCanceled {}
+    } on TickerCanceled {
+      print("Ticker Canceled");
+    }
 
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        list.remove(animatedWidget);
-        controller.dispose();
-      }
-      statusListener(status);
-    });
+    list.remove(animatedWidget);
+    controller.dispose();
+
+    statusListener(AnimationStatus.completed);
   }
 
   static AnimationController createController(
