@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animation_demos/parabolic_animation_widget.dart';
-import 'package:flutter_animation_demos/popup_animation_widget.dart';
+import 'package:flutter_demo_animations/demos/shopping_cart/supports/parabolic_animation_widget.dart';
+import 'package:flutter_demo_animations/demos/shopping_cart/supports/popup_animation_widget.dart';
 
 class AnimationPointManager {
   List<AnimatedWidget> list = [];
@@ -83,7 +83,7 @@ class AnimationPointManager {
     AnimationController ani = AnimationController(
         lowerBound: 0,
         upperBound: 1,
-        duration: duration ?? Duration(milliseconds: 800),
+        duration: duration ?? Duration(milliseconds: 2000),
         vsync: vsync);
     return ani;
   }

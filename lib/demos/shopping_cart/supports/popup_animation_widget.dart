@@ -27,7 +27,8 @@ class PopupAnimationWidget extends AnimatedWidget {
 
     final Animation<double> opacityAnimation = Tween<double>(begin: 0, end: 1)
         .animate(CurvedAnimation(
-            parent: animation, curve: Interval(0, 0.4, curve: Curves.ease)));
+            parent: animation,
+            curve: Interval(0, 0.4, curve: Curves.easeOutCubic)));
     _offset =
         Offset(_startOffset.dx, _startOffset.dy - opacityAnimation.value * 80);
 

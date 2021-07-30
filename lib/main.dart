@@ -1,187 +1,238 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_demo_animations/basics/01_animation_container.dart';
+import 'package:flutter_demo_animations/basics/02_page_route_builder.dart';
+import 'package:flutter_demo_animations/basics/03_animation_controller.dart';
+import 'package:flutter_demo_animations/basics/04_tweens.dart';
+import 'package:flutter_demo_animations/basics/05_animated_builder.dart';
+import 'package:flutter_demo_animations/basics/06_custom_tween.dart';
+import 'package:flutter_demo_animations/basics/07_tween_sequence.dart';
+import 'package:flutter_demo_animations/basics/08_fade_transition.dart';
+import 'package:flutter_demo_animations/demos/shopping_cart/shopping_cart.dart';
+import 'package:flutter_demo_animations/misc/animated_positioned.dart';
+import 'package:flutter_demo_animations/misc/animated_switcher.dart';
+import 'package:flutter_demo_animations/misc/animted_list.dart';
+import 'package:flutter_demo_animations/misc/card_swipe.dart';
+import 'package:flutter_demo_animations/misc/carousel.dart';
+import 'package:flutter_demo_animations/misc/curved_animation.dart';
+import 'package:flutter_demo_animations/misc/expand_card.dart';
+import 'package:flutter_demo_animations/misc/focus_images.dart';
+import 'package:flutter_demo_animations/demos/gif_animation.dart';
+import 'package:flutter_demo_animations/misc/hero_animation.dart';
+import 'package:flutter_demo_animations/demos/json_animation.dart';
+import 'package:flutter_demo_animations/misc/physics_card_drag.dart';
+import 'package:flutter_demo_animations/misc/repeating_animation.dart';
 
-import 'animation_point_manager.dart';
+void main() {
+  runApp(MyApp());
+}
 
-void main() => runApp(MyApp());
+class Demo {
+  final String name;
+  final String route;
+  final WidgetBuilder builder;
+
+  const Demo({
+    this.name,
+    this.route,
+    this.builder,
+  });
+}
+
+final String rootRouteName = '/';
+
+final basicDemos = [
+  Demo(
+    name: 'AnimatedContainer',
+    route: AnimatedContainerDemo.routeName,
+    builder: (BuildContext context) => AnimatedContainerDemo(),
+  ),
+  Demo(
+    name: 'PageRouteBuilder',
+    route: PageRouteBuilderDemo.routeName,
+    builder: (BuildContext context) => PageRouteBuilderDemo(),
+  ),
+  Demo(
+    name: 'AnimationController',
+    route: AnimationControllerDemo.routeName,
+    builder: (BuildContext context) => AnimationControllerDemo(),
+  ),
+  Demo(
+    name: 'Tween',
+    route: TweenDemo.routeName,
+    builder: (BuildContext context) => TweenDemo(),
+  ),
+  Demo(
+    name: 'AnimatedBuilder',
+    route: AnimatedBuilderDemo.routeName,
+    builder: (BuildContext context) => AnimatedBuilderDemo(),
+  ),
+  Demo(
+    name: 'CustomTween',
+    route: CustomTweenDemo.routeName,
+    builder: (BuildContext context) => CustomTweenDemo(),
+  ),
+  Demo(
+    name: 'TweenSequence',
+    route: TweenSequenceDemo.routeName,
+    builder: (BuildContext context) => TweenSequenceDemo(),
+  ),
+  Demo(
+    name: 'FadeTransition',
+    route: FadeTransitionDemo.routeName,
+    builder: (BuildContext context) => FadeTransitionDemo(),
+  ),
+];
+
+final miscDemos = [
+  Demo(
+    name: 'AnimatedList',
+    route: AnimatedListDemo.routeName,
+    builder: (BuildContext context) => AnimatedListDemo(),
+  ),
+  Demo(
+    name: 'AnimatedPositioned',
+    route: AnimatedPositionedDemo.routeName,
+    builder: (BuildContext context) => AnimatedPositionedDemo(),
+  ),
+  Demo(
+    name: 'AnimatedSwitcher',
+    route: AnimatedSwitcherDemo.routeName,
+    builder: (BuildContext context) => AnimatedSwitcherDemo(),
+  ),
+  Demo(
+    name: 'CardSwipe',
+    route: CardSwipeDemo.routeName,
+    builder: (BuildContext context) => CardSwipeDemo(),
+  ),
+  Demo(
+    name: 'Carousel',
+    route: CarouselDemo.routeName,
+    builder: (BuildContext context) => CarouselDemo(),
+  ),
+  Demo(
+    name: 'RepeatingAnimation',
+    route: RepeatingAnimationDemo.routeName,
+    builder: (BuildContext context) => RepeatingAnimationDemo(),
+  ),
+  Demo(
+    name: 'PhysicsCardDrag',
+    route: PhysicsCardDragDemo.routeName,
+    builder: (BuildContext context) => PhysicsCardDragDemo(),
+  ),
+  Demo(
+    name: 'ExpandCard',
+    route: ExpandCardDemo.routeName,
+    builder: (BuildContext context) => ExpandCardDemo(),
+  ),
+  Demo(
+    name: 'FocusImages',
+    route: FocusImagesDemo.routeName,
+    builder: (BuildContext context) => FocusImagesDemo(),
+  ),
+  Demo(
+    name: 'HeroAnimation',
+    route: HeroAnimationDemo.routeName,
+    builder: (BuildContext context) => HeroAnimationDemo(),
+  ),
+  Demo(
+    name: 'CurvedAnimation',
+    route: CurvedAnimationDemo.routeName,
+    builder: (BuildContext context) => CurvedAnimationDemo(),
+  ),
+];
+
+final demos = [
+  Demo(
+    name: 'GIFAnimation',
+    route: GIFAnimationDemo.routeName,
+    builder: (BuildContext context) => GIFAnimationDemo(),
+  ),
+  Demo(
+    name: 'JsonAnimation',
+    route: JsonAnimationDemo.routeName,
+    builder: (BuildContext context) => JsonAnimationDemo(),
+  ),
+  Demo(
+    name: 'ShoppingCart',
+    route: ShoppingCartDemo.routeName,
+    builder: (BuildContext context) => ShoppingCartDemo(),
+  ),
+];
+final basicDemoRoutes =
+    Map.fromEntries(basicDemos.map((e) => MapEntry(e.route, e.builder)));
+
+final miscDemoRoutes =
+    Map.fromEntries(miscDemos.map((e) => MapEntry(e.route, e.builder)));
+
+final demosRoutes =
+    Map.fromEntries(demos.map((e) => MapEntry(e.route, e.builder)));
+
+final allDemos = [
+  ...basicDemos,
+  ...miscDemos,
+  ...demos,
+];
+
+final allRoutes = <String, WidgetBuilder>{
+  rootRouteName: (BuildContext context) => MyHomePage(),
+  ...basicDemoRoutes,
+  ...miscDemoRoutes,
+  ...demosRoutes,
+};
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      routes: allRoutes,
+      initialRoute: rootRouteName,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
+  MyHomePage({Key key}) : super(key: key);
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  int count = 0;
-
-  AnimationPointManager _animationPointManager = AnimationPointManager();
-
-  GlobalKey stackKey = GlobalKey();
-  GlobalKey endKey = GlobalKey();
-
-  itemOnTap(GlobalKey startKey) {
-    print("start key " + startKey.toString());
-    print("stack key " + stackKey.toString());
-    print("end key " + endKey.toString());
-
-    _animationPointManager.addParabolicAniamtion(
-      vsync: this,
-      stackKey: stackKey,
-      startKey: startKey,
-      endKey: endKey,
-      color: Colors.green,
-      statusListener: (AnimationStatus status) {
-        setState(() {});
-        if (status == AnimationStatus.completed) {
-          buyOnTap();
-        }
-      },
-      duration: Duration(milliseconds: 700),
-    );
+class _MyHomePageState extends State<MyHomePage> {
+  List<Widget> listChildren() {
+    final headerStyle = Theme.of(context).textTheme.headline6;
+    return [
+      ListTile(
+          title: Text('Basics', style: headerStyle), tileColor: Colors.orange),
+      ...basicDemos.map((e) => ListTile(
+          leading: Text(e.name),
+          onTap: () {
+            Navigator.of(context).pushNamed(e.route);
+          })),
+      ListTile(
+          title: Text('Misc', style: headerStyle), tileColor: Colors.orange),
+      ...miscDemos.map((e) => ListTile(
+          leading: Text(e.name),
+          onTap: () {
+            Navigator.of(context).pushNamed(e.route);
+          })),
+      ListTile(
+          title: Text('Demos', style: headerStyle), tileColor: Colors.orange),
+      ...demos.map((e) => ListTile(
+          leading: Text(e.name),
+          onTap: () {
+            Navigator.of(context).pushNamed(e.route);
+          })),
+    ];
   }
-
-  buyOnTap() {
-    _animationPointManager.addPopupAniamtion(
-      vsync: this,
-      stackKey: stackKey,
-      startKey: endKey,
-      child: Container(
-        width: 100,
-        color: Colors.green,
-        padding: EdgeInsets.all(25),
-        child: Icon(Icons.home, size: 50, color: Colors.white),
-      ),
-      popupOffset: Offset(0, -50),
-      duration: Duration(milliseconds: 800),
-      statusListener: (AnimationStatus status) {
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            count += 1;
-          });
-        } else {
-          setState(() {});
-        }
-      },
-    );
-  }
-
-  ShopListView _shopListView;
-  BuyCartView _buyCartView;
 
   @override
   Widget build(BuildContext context) {
-    _shopListView ??= ShopListView(onTap: itemOnTap);
-    _buyCartView = BuyCartView(
-      count,
-      endKey: endKey,
-      onTap: buyOnTap,
-    );
-
-    List<Widget> childrens = [_shopListView, _buyCartView];
-
-    //step 4
-    print("pointers: " + _animationPointManager.list.length.toString());
-    childrens += _animationPointManager.list;
-
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: SafeArea(child: Stack(key: stackKey, children: childrens)),
-    );
-  }
-}
-
-class BuyCartView extends StatelessWidget {
-  final int count;
-  final GlobalKey endKey;
-  final Function onTap;
-
-  BuyCartView(this.count, {this.endKey, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      left: 20,
-      right: 20,
-      child: Container(
-        color: Colors.grey,
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: <Widget>[
-            GestureDetector(
-              onTap: onTap,
-              child: Container(
-                margin: EdgeInsets.all(10),
-                padding: EdgeInsets.all(10),
-                key: endKey,
-                alignment: Alignment.center,
-                width: 120,
-                color: Colors.redAccent,
-                child: Text("购物车" + count.toString()),
-              ),
-            ),
-          ],
+        appBar: AppBar(
+          title: Text('Animation Demos'),
         ),
-      ),
-    );
-  }
-}
-
-class ShopListView extends StatelessWidget {
-  final Function onTap;
-  ShopListView({this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: 20,
-      left: 20,
-      right: 20,
-      height: 500,
-      child: Container(
-        child: Container(
-            color: Colors.white,
-            child: ListView.builder(
-              itemCount: 100,
-              itemBuilder: (context, index) {
-                GlobalKey key = GlobalKey();
-                return Container(
-                  color: index % 2 == 0 ? Colors.black26 : Colors.black12,
-                  alignment: Alignment.centerRight,
-                  width: 50,
-                  child: GestureDetector(
-                    onTap: () => onTap(key),
-                    child: Container(
-                      margin: EdgeInsets.all(20),
-                      padding: EdgeInsets.all(20),
-                      height: 60,
-                      alignment: Alignment.center,
-                      key: key,
-                      width: 120,
-                      color: Colors.redAccent,
-                      child: Text("加入购物车 $index"),
-                    ),
-                  ),
-                );
-              },
-            )),
-      ),
-    );
+        body: ListView(
+          children: listChildren(),
+        ));
   }
 }
