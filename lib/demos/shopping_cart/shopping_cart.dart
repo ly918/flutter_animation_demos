@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo_animations/common.dart';
-import 'supports/animation_point_manager.dart';
+import 'supports/animation_ball_manager.dart';
 
 class ShoppingCartDemo extends StatefulWidget {
   ShoppingCartDemo({Key key}) : super(key: key);
@@ -16,24 +16,25 @@ class _ShoppingCartDemoState extends State<ShoppingCartDemo>
 
   GlobalKey stackKey = GlobalKey();
   GlobalKey endKey = GlobalKey();
-  AnimationPointManager _animationPointManager = AnimationPointManager();
+  AnimationBallManager _animationBallManager = AnimationBallManager();
 
   itemOnTap(GlobalKey startKey) {
     print("start key " + startKey.toString());
     print("stack key " + stackKey.toString());
     print("end key " + endKey.toString());
 
-    _animationPointManager.addParabolicAniamtion(
+    _animationBallManager.addBallAniamtion(
       vsync: this,
       stackKey: stackKey,
       startKey: startKey,
       endKey: endKey,
-      color: Colors.green,
+      color: Colors.blue,
       statusListener: (AnimationStatus status) {
         setState(() {
           if (status == AnimationStatus.completed) {
             count += 1;
             buyOnTap();
+            print("ball: " + _animationBallManager.list.length.toString());
           }
         });
       },
@@ -42,7 +43,7 @@ class _ShoppingCartDemoState extends State<ShoppingCartDemo>
   }
 
   buyOnTap() {
-    _animationPointManager.addPopupAniamtion(
+    _animationBallManager.addPopupAniamtion(
       vsync: this,
       stackKey: stackKey,
       startKey: endKey,
@@ -54,7 +55,11 @@ class _ShoppingCartDemoState extends State<ShoppingCartDemo>
       ),
       popupOffset: Offset(0, -50),
       duration: Duration(milliseconds: 500),
-      statusListener: (AnimationStatus status) {},
+      statusListener: (AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          print("popup: " + _animationBallManager.list.length.toString());
+        }
+      },
     );
   }
 
@@ -79,8 +84,7 @@ class _ShoppingCartDemoState extends State<ShoppingCartDemo>
     ];
 
     //step 4
-    print("pointers: " + _animationPointManager.list.length.toString());
-    childrens += _animationPointManager.list;
+    childrens += _animationBallManager.list;
 
     return Scaffold(
       appBar: AppBar(title: Text('Shopping Cart')),

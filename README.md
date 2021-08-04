@@ -1,16 +1,21 @@
 # **_Flutter Animation_**
 
+![image](./mindx.png)
+
 # 在 Flutter 中创建动画时可以采用不同的方法
 
 - GIF 动图
 - Animation Framework package
-  _ Lottie: https://github.com/xvrh/lottie-flutter
-  _ Flare: https://github.com/2d-inc/Flare-Flutter
-  >
+
+  - Lottie: https://github.com/xvrh/lottie-flutter
+  - Flare: https://github.com/2d-inc/Flare-Flutter
+    >
+
 - Code-based Animation
-  _ 隐式动画
-  _ 显示动画 \* CustomPainter
-  >
+  - 隐式动画
+  - 显示动画
+  - CustomPainter
+    >
 
 # 哪种方法适合您？考虑以下几点：
 
@@ -92,7 +97,7 @@ class CurvedAnimation extends Animation<double> with AnimationWithParentMixin<do
 
 - 定义：https://api.flutter.dev/flutter/animation/Curves-class.html
 
-- 自定义 Curve
+`自定义 Curve`
 
 ```
 class ShakeCurve extends Curve {
@@ -177,76 +182,6 @@ Animation<int> alpha = new IntTween(begin: 0, end: 255).animate(curve);
 
 - 一个 Animation 对象可以拥有 Listeners 和 StatusListeners 监听器，可以用 addListener()和 addStatusListener()来添加。 只要动画的值发生变化，就会调用监听器。一个 Listener 最常见的行为是调用 setState()来触发 UI 重建。动画开始、结束、向前移动或向后移动（如 AnimationStatus 所定义）时会调用 StatusListener。
 
-## 动画示例
-
-`用 AnimatedWidget 简化`
-
-- 如何使用 AnimatedWidget 助手类（而不是 addListener()和 setState()）来给 widget 添加动画
-
-- 使用 AnimatedWidget 创建一个可重用动画的 widget。要从 widget 中分离出动画过渡，请使用 AnimatedBuilder。
-
-- Flutter API 提供的关于 AnimatedWidget 的示例包括：AnimatedBuilder、AnimatedModalBarrier、DecoratedBoxTransition、FadeTransition、PositionedTransition、RelativePositionedTransition、RotationTransition、ScaleTransition、SizeTransition、SlideTransition。
-
-- AnimatedWidget 类允许您从 setState()调用中的动画代码中分离出 widget 代码。AnimatedWidget 不需要维护一个 State 对象来保存动画。
-
-- 在下面的重构示例中，LogoApp 现在继承自 AnimatedWidget 而不是 StatefulWidget。AnimatedWidget 在绘制时使用动画的当前值。LogoApp 仍然管理着 AnimationController 和 Tween。
-
-```
-import 'package:flutter/animation.dart';
-import 'package:flutter/material.dart';
-
-class AnimatedLogo extends AnimatedWidget {
-  AnimatedLogo({Key key, Animation<double> animation})
-      : super(key: key, listenable: animation);
-
-  Widget build(BuildContext context) {
-    final Animation<double> animation = listenable;
-    return new Center(
-      child: new Container(
-        margin: new EdgeInsets.symmetric(vertical: 10.0),
-        height: animation.value,
-        width: animation.value,
-        child: new FlutterLogo(),
-      ),
-    );
-  }
-}
-
-class LogoApp extends StatefulWidget {
-  _LogoAppState createState() => new _LogoAppState();
-}
-
-class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
-
-  initState() {
-    super.initState();
-    controller = new AnimationController(
-        duration: const Duration(milliseconds: 2000), vsync: this);
-    animation = new Tween(begin: 0.0, end: 300.0).animate(controller);
-    controller.forward();
-  }
-
-  Widget build(BuildContext context) {
-    return new AnimatedLogo(animation: animation);
-  }
-
-  dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-}
-
-void main() {
-  runApp(new LogoApp());
-}
-```
-
-- LogoApp 将 Animation 对象传递给基类并用 animation.value 设置容器的高度和宽度，因此它的工作原理与之前完全相同。
-
-- 和 animate1 中不同的是，AnimatedWidget(基类)中会自动调用 addListener()和 setState()。
-
 `监视动画的过程 `
 
 - 使用 addStatusListener 来处理动画状态更改的通知，例如启动、停止或反转方向。
@@ -279,40 +214,54 @@ AnimationStatus.forward
 AnimationStatus.completed
 ```
 
-`接下来，使用 addStatusListener()在开始或结束时反转动画。这产生了循环效果：`
+`用 AnimatedWidget 简化`
 
-```
-class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
+- 使用 AnimatedWidget 创建一个可重用动画的 widget。
 
-  initState() {
-    super.initState();
-    controller = new AnimationController(
-        duration: const Duration(milliseconds: 2000), vsync: this);
-    animation = new Tween(begin: 0.0, end: 300.0).animate(controller);
+- Flutter API 提供的关于 AnimatedWidget 的示例包括：AnimatedBuilder、AnimatedModalBarrier、DecoratedBoxTransition、FadeTransition、PositionedTransition、RelativePositionedTransition、RotationTransition、ScaleTransition、SizeTransition、SlideTransition。
 
-    animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.forward();
-      }
-    });
-    controller.forward();
-  }
-  //...
-}
-```
+- AnimatedWidget 类允许您从 setState()调用中的动画代码中分离出 widget 代码。AnimatedWidget 不需要维护一个 State 对象来保存动画。
 
 `用AnimatedBuilder重构`
 
-- AnimatedBuilder 了解如何渲染过渡.
-- An AnimatedBuilder 不知道如何渲染 widget，也不知道如何管理 Animation 对象。
-- 使用 AnimatedBuilder 将动画描述为另一个 widget 的 build 方法的一部分。如果你只是想用可复用的动画定义一个 widget，请使用 AnimatedWidget。
+- 主要作用是职责分离：
+
+  - 显示 logo
+  - 定义 Animation 对象
+  - 渲染过渡效果
+
 - Flutter API 中 AnimatedBuilder 的示例包括: BottomSheet、ExpansionTile、 PopupMenu、ProgressIndicator、RefreshIndicator、Scaffold、SnackBar、TabBar、TextField。
 
+![image](./assets/AnimatedBuilder-WidgetTree.jpg)
+
 `并行动画`
+
+> 注意：此示例展示了如何在同一个动画控制器上使用多个 Tween，其中每个 Tween 管理动画中的不同效果。 本示例仅用于示例，如果您在生产代码中需要使用不透明度和大小变化的 Tween，则可能会使用 FadeTransition 和 SizeTransition。
+
+```
+final AnimationController controller =
+    new AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+final Animation<double> sizeAnimation =
+    new Tween(begin: 0.0, end: 300.0).animate(controller);
+final Animation<double> opacityAnimation =
+    new Tween(begin: 0.1, end: 1.0).animate(controller);
+```
+
+- 你可以通过 sizeAnimation.value 来获取大小，通过 opacityAnimation.value 来获取不透明度，但 AnimatedWidget 的构造函数只接受一个动画对象。 为了解决这个问题，该示例创建了自己的 Tween 对象并显式计算了这些值。
+
+- 其 build 方法.evaluate()在父级的动画对象上调用 Tween 函数以计算所需的 size 和 opacity 值。
+
+# 交错动画
+
+- 交错动画由一个动画序列或重叠的动画组成。
+- 要创建交错动画，需要使用多个动画对象。
+- 一个 AnimationController 控制所有动画。
+- 每个动画对象在间隔(Interval)期间指定动画。
+- 对于要执行动画的每个属性都要创建一个 Tween。
+
+- https://flutterchina.club/animations/staggered-animations/
+
+![image](./assets/StaggeredAnimationIntervals.jpg)
 
 **_引用_**
 

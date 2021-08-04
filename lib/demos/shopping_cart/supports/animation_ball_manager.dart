@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo_animations/demos/shopping_cart/supports/parabolic_animation_widget.dart';
+import 'package:flutter_demo_animations/demos/shopping_cart/supports/ball_animation_widget.dart';
 import 'package:flutter_demo_animations/demos/shopping_cart/supports/popup_animation_widget.dart';
 
-class AnimationPointManager {
+class AnimationBallManager {
   List<AnimatedWidget> list = [];
 
-  Future<void> addParabolicAniamtion({
+  Future<void> addBallAniamtion({
     @required TickerProvider vsync,
     @required GlobalKey stackKey,
     @required GlobalKey startKey,
     @required GlobalKey endKey,
     @required Duration duration,
     @required AnimationStatusListener statusListener,
-    Color color = Colors.red,
+    Color color = Colors.blue,
     double size = 20,
     Offset startAdjustOffset = Offset.zero,
     Offset endAdjustOffset = Offset.zero,
@@ -20,7 +20,7 @@ class AnimationPointManager {
     AnimationController controller = createController(vsync, duration);
     Animation animation = createAnimation(controller);
 
-    AnimatedWidget animatedWidget = ParabolicAnimationWidget(
+    AnimatedWidget animatedWidget = BallAnimationWidget(
       animation: animation,
       stackKey: stackKey,
       startKey: startKey,

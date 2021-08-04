@@ -7,7 +7,9 @@ import 'package:flutter_demo_animations/basics/05_animated_builder.dart';
 import 'package:flutter_demo_animations/basics/06_custom_tween.dart';
 import 'package:flutter_demo_animations/basics/07_tween_sequence.dart';
 import 'package:flutter_demo_animations/basics/08_fade_transition.dart';
+import 'package:flutter_demo_animations/demos/animation_demo.dart';
 import 'package:flutter_demo_animations/demos/shopping_cart/shopping_cart.dart';
+import 'package:flutter_demo_animations/demos/staggered_animation_demo.dart';
 import 'package:flutter_demo_animations/misc/animated_positioned.dart';
 import 'package:flutter_demo_animations/misc/animated_switcher.dart';
 import 'package:flutter_demo_animations/misc/animted_list.dart';
@@ -21,6 +23,9 @@ import 'package:flutter_demo_animations/misc/hero_animation.dart';
 import 'package:flutter_demo_animations/demos/json_animation.dart';
 import 'package:flutter_demo_animations/misc/physics_card_drag.dart';
 import 'package:flutter_demo_animations/misc/repeating_animation.dart';
+
+import 'demos/custom_painter_demo.dart';
+import 'demos/text_style_animation.dart';
 
 void main() {
   runApp(MyApp());
@@ -143,6 +148,16 @@ final miscDemos = [
 
 final demos = [
   Demo(
+    name: 'AnimationDemo',
+    route: AnimationDemo.routeName,
+    builder: (BuildContext context) => AnimationDemo(),
+  ),
+  Demo(
+    name: 'TextStyleDemo',
+    route: TextStyleDemo.routeName,
+    builder: (BuildContext context) => TextStyleDemo(),
+  ),
+  Demo(
     name: 'GIFAnimation',
     route: GIFAnimationDemo.routeName,
     builder: (BuildContext context) => GIFAnimationDemo(),
@@ -157,6 +172,16 @@ final demos = [
     route: ShoppingCartDemo.routeName,
     builder: (BuildContext context) => ShoppingCartDemo(),
   ),
+  Demo(
+    name: 'CustomPainter',
+    route: CustomPainterDemo.routeName,
+    builder: (BuildContext context) => CustomPainterDemo(),
+  ),
+  Demo(
+    name: 'StaggeredAnimation',
+    route: StaggeredAnimationDemo.routeName,
+    builder: (BuildContext context) => StaggeredAnimationDemo(),
+  ),
 ];
 final basicDemoRoutes =
     Map.fromEntries(basicDemos.map((e) => MapEntry(e.route, e.builder)));
@@ -168,16 +193,16 @@ final demosRoutes =
     Map.fromEntries(demos.map((e) => MapEntry(e.route, e.builder)));
 
 final allDemos = [
+  ...demos,
   ...basicDemos,
   ...miscDemos,
-  ...demos,
 ];
 
 final allRoutes = <String, WidgetBuilder>{
   rootRouteName: (BuildContext context) => MyHomePage(),
+  ...demosRoutes,
   ...basicDemoRoutes,
   ...miscDemoRoutes,
-  ...demosRoutes,
 };
 
 class MyApp extends StatelessWidget {
@@ -202,6 +227,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final headerStyle = Theme.of(context).textTheme.headline6;
     return [
       ListTile(
+          title: Text('Demos', style: headerStyle), tileColor: Colors.orange),
+      ...demos.map((e) => ListTile(
+          leading: Text(e.name),
+          onTap: () {
+            Navigator.of(context).pushNamed(e.route);
+          })),
+      ListTile(
           title: Text('Basics', style: headerStyle), tileColor: Colors.orange),
       ...basicDemos.map((e) => ListTile(
           leading: Text(e.name),
@@ -211,13 +243,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ListTile(
           title: Text('Misc', style: headerStyle), tileColor: Colors.orange),
       ...miscDemos.map((e) => ListTile(
-          leading: Text(e.name),
-          onTap: () {
-            Navigator.of(context).pushNamed(e.route);
-          })),
-      ListTile(
-          title: Text('Demos', style: headerStyle), tileColor: Colors.orange),
-      ...demos.map((e) => ListTile(
           leading: Text(e.name),
           onTap: () {
             Navigator.of(context).pushNamed(e.route);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
 // ignore: must_be_immutable
-class ParabolicAnimationWidget extends AnimatedWidget {
+class BallAnimationWidget extends AnimatedWidget {
   final GlobalKey stackKey;
   final GlobalKey startKey;
   final GlobalKey endKey;
@@ -11,7 +11,7 @@ class ParabolicAnimationWidget extends AnimatedWidget {
   final Offset startAdjustOffset;
   final Offset endAdjustOffset;
 
-  ParabolicAnimationWidget({
+  BallAnimationWidget({
     @required Animation<double> animation,
     @required this.stackKey,
     @required this.startKey,
@@ -27,7 +27,7 @@ class ParabolicAnimationWidget extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
-    _calPoints();
+    _calPositions();
 
     final Animation<double> animation = listenable;
     final double time = animation.value;
@@ -64,7 +64,7 @@ class ParabolicAnimationWidget extends AnimatedWidget {
     );
   }
 
-  void _calPoints() {
+  void _calPositions() {
     if (_startOffset == null) {
       RenderBox stackBox = stackKey.currentContext.findRenderObject();
       Offset stackBoxOffset = stackBox.globalToLocal(Offset.zero);
